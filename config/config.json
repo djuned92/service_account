@@ -19,5 +19,11 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "jwt": {
+    "secretKey": "service_notiv1!.,.,",
+    "lifeTime": 300,
+    "refreshKey": "refresh_servnotif1!.,.,",
+    "refreshLifeTime": 86400
   }
 }

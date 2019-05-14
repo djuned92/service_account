@@ -19,11 +19,16 @@ exports.getAll = (req,res) => {
 
 exports.getById = (req,res) => {
   try {
-    var id = req.params.id
-    User.findByPk(id)
+    req.check('id').notEmpty()
+    req.getValidationResult().then((validationResult) => {
+      if(!validationResult.isEmpty()) {
+        return outputApi.responseError(422, validationResult.array(), res)
+      }
+      var id = req.params.id
+      User.findByPk(id)
       .then(user => {
         if(user == null) { // not found
-          return outputApi.responseError(404, false, 'User not found', user, res)
+          return outputApi.responseError(404, {message:'User not found'}, res)
         } else {
           return outputApi.responseSuccess(200, true, 'Get detail user', user, res)
         }
@@ -31,8 +36,9 @@ exports.getById = (req,res) => {
       .catch(err => {
         return outputApi.responseError(400, {message: err}, res)
       })
+    })
   } catch (err) {
-    return outputApi.responseError(500,'Internal server error', res)
+    return outputApi.responseError(500,{message:err}, res)
   }
 }
 
@@ -58,7 +64,7 @@ exports.create = (req,res) => {
               return outputApi.responseError(409, {message: "Username already exist"}, res)
             }
           })
-          .catch(err => {
+          .catch((err) => {
             return outputApi.responseError(400, {message: err}, res)
           })
       }
